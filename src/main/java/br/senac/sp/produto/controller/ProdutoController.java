@@ -9,9 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("produtos")
@@ -159,10 +159,10 @@ public class ProdutoController {
     public ResponseEntity<Page<Produto>> getProdutosPaginado(
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int itens,
-            @RequestParam(defaultValue = "id") String ordernarPor,
+            @RequestParam(defaultValue = "id") String ordenarPor,
             @RequestParam(defaultValue = "asc")String ordem
     ){
-        var ordenaçao = ordem.equalsIgnoreCase("asc") ? Sort.by(ordernarPor).ascending():Sort.by(ordernarPor).descending();
+        var ordenaçao = ordem.equalsIgnoreCase("asc") ? Sort.by(ordenarPor).ascending():Sort.by(ordenarPor).descending();
 
         var paginador = PageRequest.of(pagina,itens,ordenaçao);
 
@@ -170,6 +170,26 @@ public class ProdutoController {
 
         return ResponseEntity.ok().body(produtosPaginados);
 
+    }
+
+    @GetMapping("/somar-precos/{lote}")
+    public ResponseEntity<Object> somarPrecosPorLote(@PathVariable(name = "lote") String lote) {
+
+        List<Produto> produtosDoLote = produtoRepository.findByLote(lote);
+
+
+        if (produtosDoLote.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+
+        BigDecimal somaPrecos = produtosDoLote.stream()
+                .map(Produto::getPreco)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
+        return ResponseEntity.ok(somaPrecos);
     }
 
     }
