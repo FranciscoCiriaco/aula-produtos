@@ -1,5 +1,6 @@
-package br.senac.sp.produto.controller;
+package br.senac.sp.produto.controller.api;
 
+import br.senac.sp.produto.controller.ProdutoRequest;
 import br.senac.sp.produto.model.Produto;
 import br.senac.sp.produto.repository.ProdutoRepository;
 
@@ -15,11 +16,11 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("produtos")
-public class ProdutoController {
+public class ProdutoControllerApi {
 
     private final ProdutoRepository produtoRepository;
 
-    public ProdutoController(ProdutoRepository repository) {
+    public ProdutoControllerApi(ProdutoRepository repository) {
         this.produtoRepository = repository;
 
     }
