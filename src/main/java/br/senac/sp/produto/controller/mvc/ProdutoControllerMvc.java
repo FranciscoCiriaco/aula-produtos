@@ -3,6 +3,8 @@ package br.senac.sp.produto.controller.mvc;
 import br.senac.sp.produto.controller.ProdutoRequest;
 import br.senac.sp.produto.model.Produto;
 import br.senac.sp.produto.repository.ProdutoRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("produtos")
+@Tag(name = "API - Produto Controller API",
+        description = "Controller para tratar requisições de Produtos na API")
+
 public class ProdutoControllerMvc {
 
     private final ProdutoRepository produtoRepository;
@@ -21,10 +26,14 @@ public class ProdutoControllerMvc {
     }
 
     @GetMapping
+    @Operation(summary = "Recuperar Todos",
+            description = "Retorna todos os produtos")
     public String exibirPaginaInicial(Model model){
         return "index";
     }
     @GetMapping("/listar")
+    @Operation(summary = "Recuperar Todos",
+            description = "retorna os produtos existente")
     public String exibirProdutos(
             @RequestParam(defaultValue = "0") int page, // Página atual
             @RequestParam(defaultValue = "10") int size, // Tamanho da página
@@ -54,12 +63,16 @@ public class ProdutoControllerMvc {
         return "listaProdutos";
     }
     @GetMapping("/cadastro")
+    @Operation(summary = "Recuperar Todos",
+            description = "cadastra um novo produto")
     public String exibirFormulario(Model model){
         var request = new ProdutoRequest();
         model.addAttribute("produtoRequest", request);
         return "formularioProduto";
     }
     @PostMapping("/salvar")
+    @Operation(summary = "Recuperar Todos",
+            description = "salva os produtos")
     public String salvarProduto(@ModelAttribute ProdutoRequest request, Model model){
         var p = new Produto().setDescricao(request.getDescricao())
                 .setPreco(request.getPreco())

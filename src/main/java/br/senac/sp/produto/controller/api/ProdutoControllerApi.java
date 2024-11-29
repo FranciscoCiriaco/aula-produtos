@@ -4,28 +4,37 @@ import br.senac.sp.produto.controller.ProdutoRequest;
 import br.senac.sp.produto.model.Produto;
 import br.senac.sp.produto.repository.ProdutoRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+
 @RestController
 @RequestMapping("produtos")
-public class ProdutoControllerApi {
+@Tag(name = "API - Produto Controller API",
+        description = "Controller para tratar requisições de Produtos na API")
 
+public class ProdutoControllerApi {
     private final ProdutoRepository produtoRepository;
 
     public ProdutoControllerApi(ProdutoRepository repository) {
         this.produtoRepository = repository;
 
     }
-
     @GetMapping("/get-produtos")
+    @Operation(summary = "Recuperar Todos",
+            description = "recuperar um produto da lista")
     public ResponseEntity<List<Produto>> recuperarTodos() {
         List<Produto> produtos = produtoRepository.findAll();
         System.out.println("Total de Produtos" + produtos.size());
@@ -35,6 +44,8 @@ public class ProdutoControllerApi {
     }
 
     @GetMapping("/get-produto/{idProduto}")
+    @Operation(summary = "Recuperar id dos produtos",
+            description = "recuperar ids ")
     public ResponseEntity<Produto> recuperarPorid(@PathVariable(name = "idProduto") Long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new RuntimeException("ID NAO LOCALIZADO"));
         System.out.println(produto);
@@ -44,6 +55,8 @@ public class ProdutoControllerApi {
     }
 
     @PostMapping("/cadastrar")
+    @Operation(summary = "cadastrar todos os produtos",
+            description = "cadastrar produtos")
     public ResponseEntity<Produto> cadastrar(@RequestBody ProdutoRequest request) {
         var p = new Produto().setDescricao(request.getDescricao())
                 .setPreco(request.getPreco())
@@ -59,6 +72,8 @@ public class ProdutoControllerApi {
     }
 
     @PutMapping("/atualizar/{idProduto}")
+    @Operation(summary = "atualiza os produtos",
+            description = "atualizar os ids dos produtos")
     public ResponseEntity<Produto> alterarProdutoTotal(@PathVariable(name = "idProduto") Long id, @RequestBody ProdutoRequest request) {
 
         if (Objects.isNull(request.getDescricao()) ||
@@ -94,6 +109,8 @@ public class ProdutoControllerApi {
 
     }
     @PatchMapping("/atualizar/{idProduto}")
+    @Operation(summary = "atualiza os produtos",
+            description = "atualizar lista de produtos")
     public ResponseEntity<Produto> alterarProdutoParcial
             (@PathVariable(name = "idProduto") Long id,
              @RequestBody ProdutoRequest request) {
@@ -133,6 +150,8 @@ public class ProdutoControllerApi {
         return ResponseEntity.ok().body(produtoatualizado);
     }
     @DeleteMapping("/deletar/{idProduto}")
+    @Operation(summary = "deletar produto",
+            description = "deleta os ids dos produtos ")
     public ResponseEntity<Void> deletar(@PathVariable(name = "idProduto") Long id) {
         var produtoOptional = produtoRepository.findById(id);
         if (produtoOptional.isEmpty()) {
@@ -148,6 +167,8 @@ public class ProdutoControllerApi {
     }
 
     @DeleteMapping("/deleteall")
+    @Operation(summary = "deleta toda a lista",
+            description = "deletar todos os produtos")
     public ResponseEntity<Void> deleteall()
 
     {
@@ -157,10 +178,16 @@ public class ProdutoControllerApi {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("paginador")
+    @Operation(summary = "paginar todos",
+            description = "pagina as paginas")
     public ResponseEntity<Page<Produto>> getProdutosPaginado(
+            @Parameter(description = "Numero da pagina", example = "0")
             @RequestParam(defaultValue = "0") int pagina,
+            @Parameter(description = "Quantidade de itens na pagina", example = "10")
             @RequestParam(defaultValue = "10") int itens,
+            @Parameter(description = "Atributo que sera ordenado", example = "descricao")
             @RequestParam(defaultValue = "id") String ordenarPor,
+            @Parameter(description = "Ordem da ordenação", example = "asc")
             @RequestParam(defaultValue = "asc")String ordem
     ){
         var ordenaçao = ordem.equalsIgnoreCase("asc") ? Sort.by(ordenarPor).ascending():Sort.by(ordenarPor).descending();
@@ -174,6 +201,8 @@ public class ProdutoControllerApi {
     }
 
     @GetMapping("/somar-precos/{lote}")
+    @Operation(summary = "somar Todos",
+            description = "soma os preços dos produtos")
     public ResponseEntity<Object> somarPrecosPorLote(@PathVariable(name = "lote") String lote) {
 
         List<Produto> produtosDoLote = produtoRepository.findByLote(lote);
