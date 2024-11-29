@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("produtos")
-@Tag(name = "API - Produto Controller API",
-        description = "Controller para tratar requisições de Produtos na API")
-
+@Tag(name = "Produto Controller MVC",
+        description = "Controller para Produtos na API")
 public class ProdutoControllerMvc {
 
     private final ProdutoRepository produtoRepository;
